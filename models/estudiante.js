@@ -4,12 +4,18 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var EstudianteSchema = Schema({
-    name: String,
-    surname: String,
+    nombre: String,
+    apellido_paterno: String,
+    apellido_materno: String,
+    fecha_nacimiento: Date,
     email: String,
-    password: String,
-    role: String,
-    imagen: String
+    curp: String,
+    municipio: String,
+    colonia: String,
+    calle: String,
+    imagen: String,
+    status: Number,
+    tutor: { type: Schema.ObjectId, ref: 'tutor'}
 });
 
-module.exports = mongoose.model('Estudiante', EstudianteSchema);
+module.exports = mongoose.model('estudiante', EstudianteSchema);
