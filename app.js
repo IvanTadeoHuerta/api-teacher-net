@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 var app = express();
 
 // cargar rutas
-// var user_routers =  require('./routes/user');
+var estudiante_routers =  require('./routes/estudiante');
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -22,9 +22,8 @@ app.use((req,res, next) =>{
 });
 
 // rutas base
-app.use('/ejemplo', function(req,res){
-    res.status(200).send({ message: 'Inicio del proyecto'});
-})
+app.use('/api-teacher-net', estudiante_routers);
+
 
 
 
