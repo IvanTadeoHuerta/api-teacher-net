@@ -7,6 +7,7 @@ var CicloSchema = Schema({
     fecha_inicio: Date,
     fecha_fin: Date,
     descripcion: String,
+    image: String,
     status: Number
 });
 

@@ -1,10 +1,9 @@
 'use strict'
 
 var Perfil = require('../models/perfil');
-var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../auth/jwt');
 var fs = require('fs');
-var path = require('path');
+
 
 function registroPerfil(req, res) {
     var perfil = new Perfil();
