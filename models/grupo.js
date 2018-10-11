@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var GrupoSchema = Schema({
-    grado: String,
+    grado: Number,
     grupo: String,
     descripcion: String,
     status: Number

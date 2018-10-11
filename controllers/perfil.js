@@ -14,7 +14,7 @@ function registroPerfil(req, res) {
     perfil.status = 1;
 
     if (params.nombre && params.descripcion) {
-        if ("" + params.nombre.trim() && "" + params.nombre.trim()) {
+        if ("" + params.nombre.trim() && "" + params.descripcion.trim()) {
 
             Perfil.find({ 'nombre': params.nombre }, function (err, records) {
 
