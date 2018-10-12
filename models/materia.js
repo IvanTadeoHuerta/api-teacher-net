@@ -4,7 +4,7 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var MateriaSchema = Schema({
-    nombre_materia: Date,
+    nombre_materia: String,
     descripcion: String,
     status: Number
 });

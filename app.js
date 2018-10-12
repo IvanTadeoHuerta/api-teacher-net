@@ -10,6 +10,7 @@ var user_routers =  require('./routes/user');
 var perfil_routers =  require('./routes/perfil');
 var ciclo_routers =  require('./routes/ciclo');
 var grupo_routers =  require('./routes/grupo');
+var materia_routers =  require('./routes/materia');
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -29,6 +30,7 @@ app.use('/api-teacher-net', user_routers);
 app.use('/api-teacher-net', perfil_routers);
 app.use('/api-teacher-net', ciclo_routers);
 app.use('/api-teacher-net', grupo_routers);
+app.use('/api-teacher-net', materia_routers);
 
 
 
