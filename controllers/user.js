@@ -281,13 +281,48 @@ function updatePassword(req, res) {
         res.status(400).send({ message: 'Se requiere nuevo password' });
     }
 
+}
+
+function getUser(req, res) {
+    var userId = req.params.id;
+
+    if (req.session.perfil_nivel > 1 && userId != req.session.sub) {
+        return res.status(500).send({ message: 'No tienes permisos para realizar esta accion' });
+    }
+
+    User.findById(userId, (err, usuario) => {
+        if (err) {
+            res.status(500).send({ message: 'Error al consultar el usuario' });
+        } else {
+            if (!usuario) {
+                res.status(404).send({ message: 'El usuario no esta registrado' });
+            } else {
+                res.status(200).send({ usuario });
+            }
+        }
+    });
+}
 
 
+function getUsers(req, res) {
+    User.find().sort('username').exec((err, usuarios) => {
+        if (err) {
+            res.status(500).send({ message: 'Error al consultar el usuario' });
+        } else {
+            if (!usuarios) {
+                res.status(404).send({ message: 'No hay usuarios registrados' });
+            } else {
+                res.status(200).send({ usuarios });
+            }
+        }
+    });
 }
 
 module.exports = {
     registroUser,
     updateUser,
     updatePassword,
+    getUser,
+    getUsers,
     loginUser
 }
