@@ -6,6 +6,7 @@ var Schema = mongoose.Schema;
 var PerfilSchema = Schema({
     nombre: String,
     descripcion: String,
+    nivel: Number,
     status: Number
 });
 

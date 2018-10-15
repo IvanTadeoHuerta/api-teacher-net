@@ -11,12 +11,13 @@ function registroPerfil(req, res) {
 
     perfil.nombre = params.nombre;
     perfil.descripcion = params.descripcion;
+    perfil.nivel = params.nivel;
     perfil.status = 1;
 
-    if (params.nombre && params.descripcion) {
+    if (params.nombre && params.descripcion  && params.nivel) {
         if ("" + params.nombre.trim() && "" + params.descripcion.trim()) {
 
-            Perfil.find({ 'nombre': params.nombre }, function (err, records) {
+            Perfil.find({ 'nivel': params.nivel }, function (err, records) {
 
                 if (err) {
                     res.status(500).send({ message: 'Error al guardar perfil' });
@@ -34,7 +35,7 @@ function registroPerfil(req, res) {
                             }
                         });
                     } else {
-                        res.status(400).send({ message: 'Ya existe un perfil con ese nombre' });
+                        res.status(400).send({ message: 'Ya existe un perfil con ese nivel jerarquico' });
                     }
                 }
             });
@@ -58,7 +59,7 @@ function updatePerfil(req, res) {
 
     if (update.nombre && update.descripcion) {
 
-        Perfil.find({ 'nombre': update.nombre }, function (err, records) {
+        Perfil.find({ 'nivel': update.nivel }, function (err, records) {
             if (err) {
                 res.status(500).send({ message: 'Error al actualizar el perfil' });
             } else {

@@ -7,6 +7,7 @@ var fs = require('fs');
 var path = require('path');
 
 function registroUser(req, res) {
+    
     var user = new User();
     var params = req.body;
 
@@ -132,7 +133,7 @@ function loginUser(req, res) {
     var username = params.username;
     var password = params.password;
 
-    User.findOne({ username: username, status: 1 }, (err, user) => {
+    User.findOne({ username: username, status: 1 }).populate('perfil').exec((err, user) => {
         if (err) {
             res.status(500).send({ message: 'Ocurrio un error en el servidor' });
         } else {
