@@ -7,7 +7,7 @@ var fs = require('fs');
 var path = require('path');
 
 function registroUser(req, res) {
-    
+
     var user = new User();
     var params = req.body;
 
@@ -130,52 +130,52 @@ function registroUser(req, res) {
 
 
 function updateUser(req, res) {
-    
+
     var idUser = req.params.id;
-    var params = req.body;
-    
-    if (params.nombre && params.apellido_paterno && params.fecha_nacimiento && params.curp && params.municipio &&
-        params.colonia && params.calle && params.username && params.perfil) {
+    var update = req.body;
 
-        if ("" + params.nombre.trim() && "" + params.apellido_paterno.trim() && "" + params.fecha_nacimiento.trim() && "" + params.curp.trim() && "" + params.municipio.trim() &&
-            "" + params.colonia.trim() && "" + params.calle.trim() && "" + params.username && "" + params.perfil.trim()) {
+    if (update.nombre && update.apellido_paterno && update.fecha_nacimiento && update.curp && update.municipio &&
+        update.colonia && update.calle && update.username && update.perfil) {
 
-            User.find({ 'curp': params.curp.trim() }, function (err, records) {
+        if ("" + update.nombre.trim() && "" + update.apellido_paterno.trim() && "" + update.fecha_nacimiento.trim() && "" + update.curp.trim() && "" + update.municipio.trim() &&
+            "" + update.colonia.trim() && "" + update.calle.trim() && "" + update.username && "" + update.perfil.trim()) {
+
+            User.find({ 'curp': update.curp.trim() }, function (err, records) {
 
                 if (err) {
 
                     res.status(500).send({ message: 'Error al registrar usuario' });
 
                 } else {
-                    if (records.length==0 || records[0].id == idUser) {
+                    if (records.length == 0 || records[0].id == idUser) {
 
-                        User.find({ 'username': params.username.trim() }, function (err, records) {
+                        User.find({ 'username': update.username.trim() }, function (err, records) {
                             let userok = false;
                             let mensaje = '';
-                            if (records[0].id == idUser) {
+                            if (records.length == 0 || records[0].id == idUser) {
                                 // Validar si es estudiante
-                                if (params.perfil == '5bbf9798d9a8332c086bfaa3') {
-                                    if (params.matricula && params.matricula != undefined) {
+                                if (update.perfil == '5bbf9798d9a8332c086bfaa3') {
+                                    if (update.matricula && update.matricula != undefined) {
                                         userok = true;
                                     } else {
                                         mensaje = 'Se requiere matricula del alumno';
                                     }
                                     // Validar si es profesor                                
-                                } else if (params.perfil == '5bbf97ddd9a8332c086bfaa4') {
-                                    if (params.grado_academico && params.grado_academico != undefined) {
+                                } else if (update.perfil == '5bbf97ddd9a8332c086bfaa4') {
+                                    if (update.grado_academico && update.grado_academico != undefined) {
                                         userok = true;
                                     } else {
                                         mensaje = 'Se requiere grado academico del profesor';
                                     }
                                     // Validar si es tutor
-                                } else if (params.perfil == '5bbf9828d9a8332c086bfaa5') {
-                                    if (params.telefono_contacto && params.telefono_contacto != undefined) {
+                                } else if (update.perfil == '5bbf9828d9a8332c086bfaa5') {
+                                    if (update.telefono_contacto && update.telefono_contacto != undefined) {
                                         userok = true;
                                     } else {
                                         mensaje = 'Se requiere telefono de contacto del tutor';
                                     }
                                     // Validar si es admin del sistema
-                                } else if (params.perfil == '5bc0d71cc9248423248f3e6b') {
+                                } else if (update.perfil == '5bc0d71cc9248423248f3e6b') {
                                     userok = true;
                                 } else {
                                     mensaje = 'Verifique que el perfil seleccionado es valido';
@@ -184,10 +184,10 @@ function updateUser(req, res) {
                                 // Si estan correctos todos los campos inserta
                                 if (userok) {
 
-                                    User.findByIdAndUpdate(idUser, params, (err, userUpdated) => {
+                                    User.findByIdAndUpdate(idUser, update, (err, userUpdated) => {
                                         if (err) {
                                             res.status(500).send({ message: 'Error al actualizar usuario' });
-                                        } else   {
+                                        } else {
                                             if (!userUpdated) {
                                                 res.status(404).send({ message: 'No se pudo actualizar usuario' });
                                             } else {
@@ -237,7 +237,7 @@ function loginUser(req, res) {
             } else {
                 bcrypt.compare(password, user.password, function (err, check) {
                     if (check) {
-                        res.status(200).send({token: jwt.createToken(user), user});
+                        res.status(200).send({ token: jwt.createToken(user), user });
                     } else {
                         res.status(404).send({ message: 'El usuario no ha podido loguearse' });
                     }
@@ -247,8 +247,47 @@ function loginUser(req, res) {
     });
 }
 
+function updatePassword(req, res) {
+    var idUser = req.params.id;
+    //nuevo password
+    var password = req.body.password;
+
+    if (req.session.perfil_nivel > 1 && idUser != req.session.sub) {
+        return res.status(500).send({ message: 'No tienes permisos para cambiar password a  este usuario' });
+    }
+
+    if (password) {
+
+        bcrypt.hash(password, null, null, function (err, hash) {
+            if (err) {
+                res.status(500).send({ message: 'Error al actualizar contraseña' });
+            } else {
+                User.findByIdAndUpdate(idUser, { 'password': hash }, (err, userUpdated) => {
+                    if (err) {
+                        res.status(500).send({ message: 'Error al actualizar contraseña' });
+                    } else {
+                        if (!userUpdated) {
+                            res.status(500).send({ message: 'No se actualizo contraseña' });
+                        } else {
+                            res.status(200).send({ usuario: userUpdated });
+
+                        }
+                    }
+                });
+            }
+        });
+
+    } else {
+        res.status(400).send({ message: 'Se requiere nuevo password' });
+    }
+
+
+
+}
+
 module.exports = {
     registroUser,
     updateUser,
+    updatePassword,
     loginUser
 }
