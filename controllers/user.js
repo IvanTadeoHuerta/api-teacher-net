@@ -128,6 +128,101 @@ function registroUser(req, res) {
 
 }
 
+
+function updateUser(req, res) {
+    
+    var idUser = req.params.id;
+    var params = req.body;
+    
+    if (params.nombre && params.apellido_paterno && params.fecha_nacimiento && params.curp && params.municipio &&
+        params.colonia && params.calle && params.username && params.perfil) {
+
+        if ("" + params.nombre.trim() && "" + params.apellido_paterno.trim() && "" + params.fecha_nacimiento.trim() && "" + params.curp.trim() && "" + params.municipio.trim() &&
+            "" + params.colonia.trim() && "" + params.calle.trim() && "" + params.username && "" + params.perfil.trim()) {
+
+            User.find({ 'curp': params.curp.trim() }, function (err, records) {
+
+                if (err) {
+
+                    res.status(500).send({ message: 'Error al registrar usuario' });
+
+                } else {
+                    if (records.length==0 || records[0].id == idUser) {
+
+                        User.find({ 'username': params.username.trim() }, function (err, records) {
+                            let userok = false;
+                            let mensaje = '';
+                            if (records[0].id == idUser) {
+                                // Validar si es estudiante
+                                if (params.perfil == '5bbf9798d9a8332c086bfaa3') {
+                                    if (params.matricula && params.matricula != undefined) {
+                                        userok = true;
+                                    } else {
+                                        mensaje = 'Se requiere matricula del alumno';
+                                    }
+                                    // Validar si es profesor                                
+                                } else if (params.perfil == '5bbf97ddd9a8332c086bfaa4') {
+                                    if (params.grado_academico && params.grado_academico != undefined) {
+                                        userok = true;
+                                    } else {
+                                        mensaje = 'Se requiere grado academico del profesor';
+                                    }
+                                    // Validar si es tutor
+                                } else if (params.perfil == '5bbf9828d9a8332c086bfaa5') {
+                                    if (params.telefono_contacto && params.telefono_contacto != undefined) {
+                                        userok = true;
+                                    } else {
+                                        mensaje = 'Se requiere telefono de contacto del tutor';
+                                    }
+                                    // Validar si es admin del sistema
+                                } else if (params.perfil == '5bc0d71cc9248423248f3e6b') {
+                                    userok = true;
+                                } else {
+                                    mensaje = 'Verifique que el perfil seleccionado es valido';
+                                }
+
+                                // Si estan correctos todos los campos inserta
+                                if (userok) {
+
+                                    User.findByIdAndUpdate(idUser, params, (err, userUpdated) => {
+                                        if (err) {
+                                            res.status(500).send({ message: 'Error al actualizar usuario' });
+                                        } else   {
+                                            if (!userUpdated) {
+                                                res.status(404).send({ message: 'No se pudo actualizar usuario' });
+                                            } else {
+                                                res.status(200).send({ usuario: userUpdated });
+                                            }
+                                        }
+                                    });
+
+                                } else {
+                                    // Existe error envia mensaje
+                                    res.status(400).send({ message: mensaje });
+                                }
+
+                            } else {
+                                res.status(400).send({ message: 'El nombre de usuario ya esta en uso. Utilice otro' });
+                            }
+
+                        });
+
+                    } else {
+                        res.status(400).send({ message: 'La curp ya ha sido registrada' });
+                    }
+                }
+            });
+
+        } else {
+            res.status(400).send({ message: 'Los campos no pueden estar vacios' });
+        }
+
+    } else {
+        res.status(400).send({ message: 'Por favor verifique los datos capturados' });
+    }
+
+}
+
 function loginUser(req, res) {
     var params = req.body;
     var username = params.username;
@@ -154,5 +249,6 @@ function loginUser(req, res) {
 
 module.exports = {
     registroUser,
+    updateUser,
     loginUser
 }

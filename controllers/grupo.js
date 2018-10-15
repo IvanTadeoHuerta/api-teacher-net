@@ -68,7 +68,7 @@ function updateGrupo(req, res) {
                             if (!grupoUpdated) {
                                 res.status(404).send({ message: 'No se pudo actualizar el grupo' });
                             } else {
-                                res.status(200).send({ perfil: grupoUpdated });
+                                res.status(200).send({ grupo: grupoUpdated });
                             }
                         }
                     });
