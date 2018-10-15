@@ -20,7 +20,8 @@ var UsuarioSchema = Schema({
     username: String,
     password: String,
     status: Number,
-    perfil: { type: Schema.ObjectId, ref: 'perfil'}
+    perfil: { type: Schema.ObjectId, ref: 'perfil'},
+    tutor: { type: Schema.ObjectId, ref: 'usuario', default: null }
 });
 
 module.exports = mongoose.model('usuario', UsuarioSchema);

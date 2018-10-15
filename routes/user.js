@@ -6,6 +6,7 @@ var md_auth = require('../auth/authenticated');
 var api = express.Router();
 
 api.post('/registro-user', UserController.registroUser);
+api.post('/login-user', UserController.loginUser);
 
 
 module.exports = api;
